@@ -135,6 +135,22 @@ module Models
       vrp
     end
 
+    def valid?
+      puts "vrp.valid? is called"
+      # instead of "raise" we need to add these errors to the list with
+      # errors.add(:empty_file, message: 'JSON file is empty') for exemple
+      # then grape returns it as a list of errors. That way instead of raising a generic error of
+      # "There is a service with XXX error." we can automatically return
+      # "Service[A] Service[B] Service[C] has XXX error" which is easier to debug for the user.
+      # When an activehash validator is called, it does exavtly this but they are not called at the
+      # moment, we need to pass via the base.vrp? to call for all members automatically
+
+      # We can move the validations defined in check_consistency function to custom ActiveModel::Validations
+      # https://api.rubyonrails.org/classes/ActiveModel/Validator.html
+      byebug
+      super
+    end
+
     def self.check_consistency(hash)
       # matrix_id consistency
       hash[:vehicles]&.each{ |v|

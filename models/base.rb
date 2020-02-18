@@ -49,6 +49,15 @@ module Models
       }
     end
 
+    def valid?
+      puts "base.valid? is called"
+      # here we neeed to call valid? for all model members and launch the ActiveModel::Validators
+      # there is a list of validators in the self object but not sure how to call them
+      # plus member errors need to be added to the parent error list, I am not sure if this is automatic or manual.
+      byebug
+      errors.empty?
+    end
+
     def self.has_many(name, options = {})
       super
 
