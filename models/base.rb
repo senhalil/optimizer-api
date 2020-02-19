@@ -79,35 +79,37 @@ module Models
         }&.compact || []
       end
 
-      define_method("#{name[0..-2]}_ids=") do |vals|
-        c = class_from_string(options[:class_name])
-        self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-      end
-
-      define_method("#{name[0..-2]}_ids+=") do |vals|
-        c = class_from_string(options[:class_name])
-        if self[name]
-          self[name] += vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-        else
+      if !(/^[^aeiou]ies/ =~ name[-4..-1].downcase)
+        define_method("#{name[0..-2]}_ids=") do |vals|
+          c = class_from_string(options[:class_name])
           self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
         end
-      end
 
-      define_method("#{name[0..-4]}y_ids=") do |vals|
-        c = class_from_string(options[:class_name])
-        if self[name]
-          self[name] += vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-        else
-          self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
+        define_method("#{name[0..-2]}_ids+=") do |vals|
+          c = class_from_string(options[:class_name])
+          if self[name]
+            self[name] += vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
+          else
+            self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
+          end
         end
-      end
+      else
+        define_method("#{name[0..-4]}y_ids=") do |vals|
+          c = class_from_string(options[:class_name])
+          if self[name]
+            self[name] += vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
+          else
+            self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
+          end
+        end
 
-      define_method("#{name[0..-4]}y_ids+=") do |vals|
-        c = class_from_string(options[:class_name])
-        if self[name]
-          self[name] += vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-        else
-          self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
+        define_method("#{name[0..-4]}y_ids+=") do |vals|
+          c = class_from_string(options[:class_name])
+          if self[name]
+            self[name] += vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
+          else
+            self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
+          end
         end
       end
     end
