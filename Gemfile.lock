@@ -6,11 +6,11 @@ GIT
       activesupport (>= 2.2.2)
 
 GIT
-  remote: git://github.com/Mapotempo/balanced_vrp_clustering.git
-  revision: 14cf6d7336de3c8d6924cd2931fb43b26c70699e
-  branch: dev
+  remote: git://github.com/senhalil/balanced_vrp_clustering.git
+  revision: 2f2f9b5892e125714bda6ac5ae7784f713c3bab5
+  branch: improve_balancing
   specs:
-    balanced_vrp_clustering (0.1.6)
+    balanced_vrp_clustering (0.1.7)
       color-generator
       geojson2image
 

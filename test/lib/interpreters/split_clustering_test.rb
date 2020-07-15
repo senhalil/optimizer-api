@@ -205,8 +205,8 @@ class SplitClusteringTest < Minitest::Test
         durations << service_vrp_vehicle[:vrp].services_duration
       }
       average_duration = durations.inject(0, :+) / durations.size
-      min_duration = average_duration - 0.5 * average_duration
-      max_duration = average_duration + 0.5 * average_duration
+      min_duration = average_duration - 0.45 * average_duration
+      max_duration = average_duration + 0.55 * average_duration
 
       durations.each_with_index{ |duration, index|
         assert duration < max_duration && duration > min_duration, "Duration ##{index} (#{duration.round(2)}) should be between #{min_duration.round(2)} and #{max_duration.round(2)}. All durations #{durations.inspect}"
