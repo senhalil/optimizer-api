@@ -28,7 +28,7 @@ module Models
       field :overload, default: 0
 
       def +(other)
-        merged_cost = CostDetails.new({})
+        merged_cost = CostDetails.create({})
         self.attributes.each_key{ |key|
           merged_cost[key] = (self[key] || 0) + (other[key] || 0)
         }
