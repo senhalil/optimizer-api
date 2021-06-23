@@ -31,7 +31,7 @@ module Models
     end
 
     def +(other)
-      CostDetails.new(
+      CostDetails.create(
         fixed: fixed + other.fixed,
         time: time + other.time,
         distance: distance + other.distance,

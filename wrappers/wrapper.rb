@@ -1284,7 +1284,7 @@ module Wrappers
       OptimizerWrapper.parse_result(vrp, {
         solvers: [solver],
         cost: nil,
-        cost_details: Models::CostDetails.new({}),
+        cost_details: Models::CostDetails.create({}),
         iterations: nil,
         routes: vrp.vehicles.collect{ |vehicle|
           OptimizerWrapper.empty_route(vrp, vehicle)
