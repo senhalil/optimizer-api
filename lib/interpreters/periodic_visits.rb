@@ -470,17 +470,16 @@ module Interpreters
         next if [:sticky_vehicle_ids, :quantity_ids,
                  :start_point_id, :end_point_id, :capacity_ids, :sequence_timewindow_ids, :timewindow_id].include?(key)
 
+        # if a key is supplied in the options manually as nil, this means removing the key
+        next if options.key?(key) && options[key].nil?
+
         data[key] = options[key] || original[key]
       }
     end
 
     def duplicate_safe(original, options = {})
       # TODO : replace by implementing initialize_copy function for shallow copy + create model for visits
-      if original.is_a?(Models::Service)
-        Models::Service.new(get_original_values(original, options))
-      elsif original.is_a?(Models::Vehicle)
-        Models::Vehicle.new(get_original_values(original, options))
-      end
+      original.class.create(get_original_values(original, options))
     end
   end
 end
