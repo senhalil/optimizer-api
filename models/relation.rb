@@ -33,6 +33,12 @@ module Models
     # validates_inclusion_of :type, :in => %i(same_route sequence order minimum_day_lapse maximum_day_lapse shipment meetup maximum_duration_lapse vehicle_group_duration vehicle_group_duration_on_weeks vehicle_group_duration_on_months vehicle_trips)
 
     def self.create(hash)
+      # TODO: remove it after the linked_ids is replaced with linked_service_ids in the api definition
+      raise 'Use linked_ids to link service objects to relations' if hash.key?(:linked_service_ids) || hash.key?(:linked_services)
+
+      # TODO: remove it after the linked_ids is replaced with linked_service_ids in the api definition
+      hash[:linked_service_ids] = hash[:linked_ids] if hash.key?(:linked_ids)
+
       hash[:type] = hash[:type]&.to_sym if hash.key?(:type)
       super(hash)
     end
