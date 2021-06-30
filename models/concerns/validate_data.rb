@@ -333,12 +333,28 @@ module ValidateData
     check_relation_consistent_timewindows
     check_sticky_relation_consistency
 
-    incompatible_relation_types = @hash[:relations].collect{ |r| r[:type] }.uniq - %i[force_first never_first force_end]
-    return unless periodic_heuristic && incompatible_relation_types.any?
+    @hash[:relations]&.each{ |relation|
+      services_in_relation = relation[:linked_ids]&.collect{ |s_id| @hash[:services].find{ |s| s[:id] == s_id } } || []
+      if services_in_relation.uniq{ |s| s[:visits_number] || 1 }.size > 1
+        raise OptimizerWrapper::UnsupportedProblemError.new(
+          'Services in relations should have the same visits_number. '\
+          'Following services in relation but they have different visits_number values: ',
+          [relation[:linked_ids]]
+        )
+      elsif services_in_relation.uniq{ |s| [s[:minimum_lapse] || 1, s[:maximum_lapse].to_i] }.size > 1
+        raise OptimizerWrapper::UnsupportedProblemError.new(
+          'Services in relations should have the same minimum_lapse and maximum_lapse. '\
+          'Following services in relation but they have different lapse values: ',
+          [relation[:linked_ids]]
+        )
+      end
+    }
 
-    raise OptimizerWrapper::UnsupportedProblemError.new(
-      "#{incompatible_relation_types} relations not available with specified first_solution_strategy"
-    )
+    return unless periodic_heuristic
+
+    incompatible_relation_types = @hash[:relations].collect{ |r| r[:type] }.uniq - %i[force_first never_first force_end]
+    err_msg = "#{incompatible_relation_types} relations not available with specified first_solution_strategy"
+    raise OptimizerWrapper::UnsupportedProblemError.new(err_msg) if incompatible_relation_types.any?
   end
 
   def check_sticky_relation_consistency
