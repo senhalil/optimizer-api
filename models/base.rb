@@ -75,6 +75,10 @@ module Models
           "#{name[0..-4]}y_ids".to_sym
         end
 
+      define_method(ids_function_name) do
+        self[ids_function_name] ||= self[name]&.map(&:id)
+      end
+
       define_method("#{ids_function_name}=") do |vals|
         c = class_from_string(options[:class_name])
         self[name] = vals && vals.split(',').flat_map{ |val_id| c.find(val_id) }
