@@ -77,7 +77,7 @@ module Models
 
       define_method("#{ids_function_name}=") do |vals|
         c = class_from_string(options[:class_name])
-        self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
+        self[name] = vals && vals.split(',').flat_map{ |val_id| c.find(val_id) }
       end
     end
 
