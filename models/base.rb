@@ -97,11 +97,13 @@ module Models
         self[name] = val && (val.is_a?(Hash) ? c.create(val) : val)
       end
 
-      define_method("#{name}_id") do
-        self[name]&.id
+      id_function_name = "#{name}_id".to_sym
+
+      define_method(id_function_name) do
+        self[id_function_name] ||= self[name]&.id
       end
 
-      define_method("#{name}_id=") do |val_id|
+      define_method("#{id_function_name}=") do |val_id|
         c = class_from_string(options[:class_name])
         self[name] = val_id && c.find(val_id)
       end
