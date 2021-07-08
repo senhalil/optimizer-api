@@ -67,12 +67,15 @@ module Models
         }&.compact || []
       end
 
-      define_method("#{name[0..-2]}_ids=") do |vals|
-        c = class_from_string(options[:class_name])
-        self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-      end
+      # respect English spelling rules: vehicles -> vehicle_ids | capacities -> capacity_ids
+      ids_function_name =
+        if !(/^[^aeiou]ies/ =~ name[-4..-1].downcase)
+          "#{name[0..-2]}_ids".to_sym
+        else
+          "#{name[0..-4]}y_ids".to_sym
+        end
 
-      define_method("#{name[0..-4]}y_ids=") do |vals|
+      define_method("#{ids_function_name}=") do |vals|
         c = class_from_string(options[:class_name])
         self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
       end
