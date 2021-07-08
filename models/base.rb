@@ -67,44 +67,14 @@ module Models
         }&.compact || []
       end
 
-      define_method("#{name}+=") do |vals|
-        self[name] = [] if !self[name]
-        self[name] += vals&.collect{ |val|
-          c = class_from_string(options[:class_name])
-          if val.is_a?(c)
-            val
-          else
-            c.create(val) if !val.empty?
-          end
-        }&.compact || []
-      end
-
       define_method("#{name[0..-2]}_ids=") do |vals|
         c = class_from_string(options[:class_name])
         self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
       end
 
-      define_method("#{name[0..-2]}_ids+=") do |vals|
-        c = class_from_string(options[:class_name])
-        if self[name]
-          self[name] += vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-        else
-          self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-        end
-      end
-
       define_method("#{name[0..-4]}y_ids=") do |vals|
         c = class_from_string(options[:class_name])
         self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-      end
-
-      define_method("#{name[0..-4]}y_ids+=") do |vals|
-        c = class_from_string(options[:class_name])
-        if self[name]
-          self[name] += vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-        else
-          self[name] = vals && vals.split(',').collect{ |val_id| c.find(val_id) }.flatten.compact
-        end
       end
     end
 
