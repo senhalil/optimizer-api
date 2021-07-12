@@ -246,64 +246,30 @@ module Models
     end
 
     def test_duplicated_ids_are_not_allowed
-      assert TestHelper.create(VRP.basic) # this should not produce any error
+      vrp_base = VRP.basic
+      # add missing fields so that they can be duplicated for the test
+      vrp_base[:rests] = [{ id: 'rest', timewindows: [{ start: 1, end: 2 }], duration: 1 }]
+      vrp_base[:shipments] = [{
+        id: 'shipment',
+        pickup: { point_id: 'point_3', duration: 3 },
+        delivery: { point_id: 'point_2', duration: 3 },
+        quantities: [{ unit_id: 'unit', value: 3 }]
+      }]
+      vrp_base[:zones] = [{ id: 'zone', polygon: { type: 'Polygon', coordinates: [[[0.5, 48.5], [1.5, 48.5]]] }}]
+      vrp_base[:subtours] = [{ id: 'tour', time_bounds: 180 }]
+      vrp_base[:units] = [{ id: 'unit' }]
+      vrp_base[:vehicles].first[:capacities] = [{ unit_id: 'unit', limit: 10 }]
+      vrp_base = Oj.dump(vrp_base)
 
-      vrp = VRP.basic
-      vrp[:vehicles] << vrp[:vehicles].first
-      assert_raises OptimizerWrapper::DiscordantProblemError do
-        TestHelper.create(vrp)
-      end
+      assert TestHelper.create(Oj.load(vrp_base)) # this should not produce any errors
 
-      vrp = VRP.basic
-      vrp[:services] << vrp[:services].first
-      assert_raises OptimizerWrapper::DiscordantProblemError do
-        TestHelper.create(vrp)
-      end
-
-      vrp = VRP.basic
-      vrp[:matrices] << vrp[:matrices].first
-      assert_raises OptimizerWrapper::DiscordantProblemError do
-        TestHelper.create(vrp)
-      end
-
-      vrp = VRP.basic
-      vrp[:points] << vrp[:points].first
-      assert_raises OptimizerWrapper::DiscordantProblemError do
-        TestHelper.create(vrp)
-      end
-
-      vrp = VRP.basic
-      vrp[:rests] = Array.new(2){ |_rest| { id: 'same_id', timewindows: [{ start: 1, end: 2 }], duration: 1 } }
-      assert_raises OptimizerWrapper::DiscordantProblemError do
-        TestHelper.create(vrp)
-      end
-
-      assert TestHelper.create(VRP.pud) # this should not produce any error
-      vrp = VRP.pud
-      vrp[:shipments] << vrp[:shipments].first
-      assert_raises OptimizerWrapper::DiscordantProblemError do
-        TestHelper.create(vrp)
-      end
-
-      vrp = VRP.pud
-      vrp[:vehicles].first[:capacities] = [{ unit_id: 'unit_0', value: 10 }]
-      vrp[:shipments].first[:quantities] = [{ unit_id: 'unit_0', value: -5 }]
-      vrp[:units] << vrp[:units].first
-      assert_raises OptimizerWrapper::DiscordantProblemError do
-        TestHelper.create(vrp)
-      end
-
-      vrp = VRP.pud
-      vrp[:zones] = Array.new(2){ |_zone| { id: 'same_zone', polygon: { type: 'Polygon', coordinates: [[[0.5, 48.5], [1.5, 48.5]]] }} }
-      assert_raises OptimizerWrapper::DiscordantProblemError do
-        TestHelper.create(vrp)
-      end
-
-      vrp = VRP.pud
-      vrp[:subtours] = Array.new(2){ |_tour| { id: 'same_tour', time_bouds: 180 } }
-      assert_raises OptimizerWrapper::DiscordantProblemError do
-        TestHelper.create(vrp)
-      end
+      %i[
+        matrices points rests services shipments units vehicles zones
+      ].each{ |symbol|
+        vrp = Oj.load(vrp_base)
+        vrp[symbol] << vrp[symbol].first
+        assert_raises ActiveHash::IdError do TestHelper.create(vrp) end
+      }
     end
 
     def test_dates_cannot_be_mixed_with_indices

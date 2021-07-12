@@ -1,12 +1,4 @@
 GIT
-  remote: https://github.com/Mapotempo/active_hash.git
-  revision: 6471576562e2db78fa87f8a1cc6ec848c88ab76e
-  branch: mapo
-  specs:
-    active_hash (3.1.0)
-      activesupport (>= 5.0.0)
-
-GIT
   remote: https://github.com/Mapotempo/balanced_vrp_clustering.git
   revision: c76cca8fe53bf802aca2f998631f7c24c59cb3c4
   branch: dev
@@ -15,6 +7,13 @@ GIT
       awesome_print
       color-generator
       geojson2image
+
+GIT
+  remote: https://github.com/senhalil/active_hash.git
+  revision: 4229b74b97e50114a1bf6d69b63766cee75bea1c
+  specs:
+    active_hash (3.1.0)
+      activesupport (>= 5.0.0)
 
 GIT
   remote: https://github.com/senhalil/rack.git
