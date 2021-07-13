@@ -154,7 +154,7 @@ module Models
       exception = assert_raises ActiveHash::RecordNotFound do
         OptimizerWrapper.wrapper_vrp('demo', { services: { vrp: [:demo] }}, TestHelper.create(vrp), nil)
       end
-      assert_equal('Couldn\'t find Models::Point with ID=missing_point_id', exception.message)
+      assert_equal("Couldn't find Models::Point with ID=#{vrp[:services][0][:activity][:point_id].inspect}", exception.message)
     end
 
     def test_reject_if_shipments_and_periodic_heuristic
@@ -336,7 +336,7 @@ module Models
                          { type: 'shipment', linked_ids: ['service_2'] },
                          { type: 'shipment', linked_ids: ['service_1', 'service_3'] }]
       error = assert_raises OptimizerWrapper::DiscordantProblemError do
-        Models::Vrp.create(TestHelper.coerce(vrp))
+        TestHelper.create(TestHelper.coerce(vrp))
       end
       assert_equal 'Shipment relations need to have two services -- a pickup and a delivery. ' \
                    'Relations of following services does not have exactly two linked_ids: ' \
@@ -350,12 +350,12 @@ module Models
       # multi-pickup single delivery
       vrp[:relations] = [{ type: 'shipment', linked_ids: ['service_1', 'service_3'] },
                          { type: 'shipment', linked_ids: ['service_2', 'service_3'] }]
-      assert Models::Vrp.create(TestHelper.coerce(vrp)), 'Multi-pickup shipment should not be rejected'
+      assert TestHelper.create(TestHelper.coerce(vrp)), 'Multi-pickup shipment should not be rejected'
 
       # single pickup multi-delivery
       vrp[:relations] = [{ type: 'shipment', linked_ids: ['service_1', 'service_3'] },
                          { type: 'shipment', linked_ids: ['service_1', 'service_2'] }]
-      assert Models::Vrp.create(TestHelper.coerce(vrp)), 'Multi-delivery shipment should not be rejected'
+      assert TestHelper.create(TestHelper.coerce(vrp)), 'Multi-delivery shipment should not be rejected'
     end
 
     def test_ensure_no_skill_matches_with_internal_skills_format
@@ -371,7 +371,7 @@ module Models
       vrp = VRP.toy
       vrp[:services] << vrp[:services].first
 
-      assert_raises OptimizerWrapper::DiscordantProblemError do
+      assert_raises ActiveHash::IdError do
         OptimizerWrapper.wrapper_vrp('demo', { services: { vrp: [:demo] }}, TestHelper.create(vrp), nil)
       end
     end
